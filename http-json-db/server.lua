@@ -59,12 +59,12 @@ coroutine.wrap(function()
 end)()
 
 weblit.app
-  .bind({host = "127.0.0.1", port = 1337})
+  .bind({ host = '127.0.0.1', port = 1337 })
   .use(weblit.logger)
   .use(weblit.autoHeaders)
-  .route({ path = "/:name"}, function (req, res)
+  .route({ path = '/:name' }, function(req, res)
     res.body = body
     res.code = 200
-    res.headers["Content-Type"] = "text/plain"
+    res.headers['Content-Type'] = 'text/plain'
   end)
   .start()
