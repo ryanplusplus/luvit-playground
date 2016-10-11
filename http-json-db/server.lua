@@ -1,6 +1,10 @@
 local http = require 'coro-http'
 local split = require 'coro-split'
 local json = require 'json'
+local timer = require 'timer'
+local weblit = require('weblit')
+
+local body = ''
 
 local urls = {
   'http://www.foaas.com/this/Everyone',
@@ -40,14 +44,27 @@ local function Requester(url)
 end
 
 coroutine.wrap(function()
-  local requesters = {}
-  for _, url in ipairs(urls) do
-    table.insert(requesters, Requester(url))
-  end
+  while true do
+    local requesters = {}
+    for _, url in ipairs(urls) do
+      table.insert(requesters, Requester(url))
+    end
 
-  local responses = table.pack(split(table.unpack(requesters)))
+    local responses = table.pack(split(table.unpack(requesters)))
 
-  for _, response in ipairs(responses) do
-    print(response)
+    body = responses[math.random(#responses)]
+
+    timer.sleep(1000)
   end
 end)()
+
+weblit.app
+  .bind({host = "127.0.0.1", port = 1337})
+  .use(weblit.logger)
+  .use(weblit.autoHeaders)
+  .route({ path = "/:name"}, function (req, res)
+    res.body = body
+    res.code = 200
+    res.headers["Content-Type"] = "text/plain"
+  end)
+  .start()

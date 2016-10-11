@@ -5,7 +5,8 @@ return {
     "creationix/coro-http@2.1.1",
     "creationix/coro-split@2.0.0",
     "luvit/json@2.5.2",
-    "luvit/secure-socket@1.1.4"
+    "luvit/secure-socket@1.1.4",
+    "creationix/weblit@2.2.0"
   },
   files = {
     "package.lua"
