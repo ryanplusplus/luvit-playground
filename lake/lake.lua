@@ -1,6 +1,5 @@
 -- todo
 -- ====
--- multiple targets
 -- check dates on deps
 -- alternatives
 -- patterns
@@ -26,7 +25,6 @@ local function exec(command)
   for arg in rest:gmatch('%S+') do
     table.insert(args, arg)
   end
-  print(cmd, args[1], args[2])
   spawn(cmd, { args = args }).waitExit()
 end
 
@@ -39,17 +37,20 @@ local function execute(recipe)
   end)
 end
 
-local function rule(target, deps, f)
+local function rule(targets, deps, f)
   if type(f) == 'string' then
     local command = f
     f = function() exec(command) end
   end
-  recipes[target] = { target = target, deps = deps, f = f, subscribers = {} }
+  if type(targets) == 'string' then
+    targets = { targets }
+  end
+  for _, target in ipairs(targets) do
+    recipes[target] = { target = target, deps = deps, f = f, subscribers = {} }
+  end
 end
 
 local function _run(target)
-  print('running ' .. target)
-
   local recipe = recipes[target]
 
   if exists(target) then return end
