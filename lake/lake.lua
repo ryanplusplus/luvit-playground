@@ -1,6 +1,10 @@
 -- todo
+-- ====
 -- multiple targets
 -- check dates on deps
+-- alternatives
+-- patterns
+-- pass variables to recipe functions
 
 local spawn = require 'coro-spawn'
 local split = require 'coro-split'
@@ -16,21 +20,36 @@ local function exists(target)
   return fs.stat(target) ~= nil
 end
 
+local function exec(command)
+  local cmd, rest = command:match('(%S+)%s(.+)')
+  local args = {}
+  for arg in rest:gmatch('%S+') do
+    table.insert(args, arg)
+  end
+  print(cmd, args[1], args[2])
+  spawn(cmd, { args = args }).waitExit()
+end
+
 local function execute(recipe)
   coro(function()
-    print('executing: ' .. recipe.command)
-    local command, arg = recipe.command:match('(%S+)%s+(%S+)')
-    spawn(command, { args = { arg } }).waitExit()
-    print('finished: ' .. recipe.command)
+    print('building: ' .. recipe.target)
+    recipe.f()
+    print('finished: ' .. recipe.target)
     split(table.unpack(recipe.subscribers))
   end)
 end
 
-local function rule(target, deps, command)
-  recipes[target] = { deps = deps, command = command, subscribers = {} }
+local function rule(target, deps, f)
+  if type(f) == 'string' then
+    local command = f
+    f = function() exec(command) end
+  end
+  recipes[target] = { target = target, deps = deps, f = f, subscribers = {} }
 end
 
 local function _run(target)
+  print('running ' .. target)
+
   local recipe = recipes[target]
 
   if exists(target) then return end
@@ -72,10 +91,14 @@ end
 
 --
 
-rule('build/a.o', 'src/a.c', 'touch build/a.o')
-rule('build/b.o', 'src/b.c', 'touch build/b.o')
-rule('build/c.o', 'src/c.c', 'touch build/c.o')
+rule('build', {}, function()
+  fs.mkdirp('build')
+end)
 
-rule('build/app.lib', { 'build/a.o', 'build/b.o', 'build/c.o' }, 'touch build/app.lib')
+rule('build/a.o', { 'src/a.c', 'build' }, 'touch build/a.o')
+rule('build/b.o', { 'src/b.c', 'build' }, 'touch build/b.o')
+rule('build/c.o', { 'src/c.c', 'build' }, 'touch build/c.o')
+
+rule('build/app.lib', { 'build/a.o', 'build/b.o', 'build/c.o', 'build' }, 'touch build/app.lib')
 
 run('build/app.lib')
