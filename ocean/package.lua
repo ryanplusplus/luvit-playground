@@ -1,5 +1,5 @@
 return {
-  name = "ryanplusplus/lake",
+  name = "ryanplusplus/ocean",
   version = "0.0.1",
   dependencies = {
     "creationix/coro-spawn@2.0.0",
@@ -7,7 +7,7 @@ return {
     "luvit/pretty-print@2.0.0"
   },
   files = {
-    "package.lua"
+    "**.lua"
   },
   description = "Playing around.",
   tags = {},
