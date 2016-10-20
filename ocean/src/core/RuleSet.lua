@@ -9,10 +9,6 @@ return function()
       deps = { deps }
     end
     builder = builder or function() end
-    if type(builder) == 'string' then
-      local command = builder
-      builder = function() exec(command) end
-    end
 
     for _, target in ipairs(targets) do
       local rule = {
