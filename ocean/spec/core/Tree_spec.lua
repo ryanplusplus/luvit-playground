@@ -1,5 +1,5 @@
 describe('core.Tree', function()
-  local proxyquire = require 'deps/proxyquire/src/proxyquire'
+  local proxyquire = require 'deps/proxyquire'
   local files
   local fs = {
     stat = function(file)
