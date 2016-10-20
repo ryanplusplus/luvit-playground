@@ -17,7 +17,7 @@ local function is_before(mtime1, mtime2)
   end
 end
 
-return function(rules, target)
+return function(target, rules)
   local tree_cache = {}
 
   local function make_tree(target)
@@ -27,7 +27,7 @@ return function(rules, target)
     local target_mtime = mtime(target)
 
     for _, rule in ipairs(rules) do
-      local match = target:match(rule.target)
+      local match = target:match('^' .. rule.target:gsub('*', '(%%S+)') .. '$')
       local out_of_date = false
 
       if match ~= nil then
@@ -37,8 +37,7 @@ return function(rules, target)
           rule = rule,
           target = target,
           deps = {},
-          match = match,
-          phony = phony
+          match = match
         }
 
         for _, dep in ipairs(rule.deps) do

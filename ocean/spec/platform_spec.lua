@@ -1,0 +1,5 @@
+describe('Platform', function()
+  it('should be Lua 5.1', function()
+    assert.are.equal('Lua 5.1', _VERSION)
+  end)
+end)

@@ -16,7 +16,7 @@ return function()
 
     for _, target in ipairs(targets) do
       local rule = {
-        target = '^' .. target:gsub('*', '(%%S+)') .. '$',
+        target = target,
         deps = deps,
         builder = builder,
         subscribers = {},

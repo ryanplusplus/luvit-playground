@@ -12,7 +12,7 @@ return function(args)
 
   local function run(target)
     coroutine.wrap(function()
-      local tree = Tree(rule_set.rules, target)
+      local tree = Tree(target, rule_set.rules)
 
       if not tree then
         print('error: no recipe for building target "' .. target .. '"')
