@@ -7,7 +7,8 @@ return {
     "luvit/pretty-print@2.0.0"
   },
   files = {
-    "**.lua"
+    "**.lua",
+    "!spec/**.lua"
   },
   description = "Playing around.",
   tags = {},
