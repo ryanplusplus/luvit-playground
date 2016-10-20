@@ -5,6 +5,11 @@ return function(args)
 
   local rule_set = RuleSet()
 
+  if not args[1] then
+    print('usage: ocean <lakefile> [<target>]')
+    return
+  end
+
   local function run(target)
     coroutine.wrap(function()
       local tree = Tree(rule_set.rules, target)
